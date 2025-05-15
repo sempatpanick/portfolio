@@ -163,6 +163,11 @@
             font-size: 0.95rem;
             color: #55606a;
             margin-top: 0.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .carousel-item img {
@@ -285,8 +290,13 @@
                 @foreach ($projects as $project)
                 <div class="col-sm-6 col-md-4 col-lg-3">
                     <div class="card shadow-sm" data-bs-toggle="modal" data-bs-target="#projectModal{{ $project->id }}">
-                        <img src="{{ $project->url_headline_image ?? $project->url_images[0] }}" class="card-img-top"
-                            alt="Project 1" />
+                        <img src="{{ $project->url_headline_image ?: (isset($project->url_images[0]) ? $project->url_images[0] : '') }}"
+                            class="card-img-top" alt="Project 1"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                        <div
+                            style="display: none; justify-content: center; align-items: center; height: 180px; background: #f0f0f0;">
+                            No Image
+                        </div>
                         <div class="card-body">
                             <h5 class="card-title">{{ $project->title }}</h5>
                             <p class="card-text">{{ $project->description }}</p>
