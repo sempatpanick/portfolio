@@ -26,8 +26,9 @@ jobs:
           server: ${{ vars.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: /
-          server-dir: /laravel/
+          exclude: public/**
+          local-dir: ./
+          server-dir: laravel/
 
       - name: Deploy public directory
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -35,5 +36,5 @@ jobs:
           server: ${{ vars.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: /public/
-          server-dir: /public-html/
+          local-dir: public/
+          server-dir: public-html/
