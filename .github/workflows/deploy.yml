@@ -14,6 +14,10 @@ jobs:
         with:
           php-version: "8.4"
       - uses: actions/checkout@v4
+      - name: Patch index.php paths
+        run: |
+          sed -i "s|require __DIR__.'/../vendor/autoload.php';|require __DIR__.'/../laravel/vendor/autoload.php';|" public/index.php
+          sed -i "s|\$app = require_once __DIR__.'/../bootstrap/app.php';|\$app = require_once __DIR__.'/../laravel/bootstrap/app.php';|" public/index.php
       - name: Deploy Laravel Project
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -33,13 +37,14 @@ jobs:
           local-dir: public/
           server-dir: ./
 
-      - name: Set up SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan ${{ vars.SSH_IP }} >> ~/.ssh/known_hosts
-
-      - name: Connect and run command over SSH
-        run: |
-          ssh ${{ vars.SSH_PORT }} ${{ vars.SSH_USERNAME }}@${{ vars.SSH_IP }} "echo 'SSH Connection Successful!' && uptime"
+      - name: Execute remote SSH commands using password
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd domains/ddg.my.id/laravel
+            composer2 install
+            php artisan migrate
