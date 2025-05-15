@@ -22,7 +22,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           exclude: public/**
           local-dir: ./
-          server-dir: laravel/
+          server-dir: ../laravel/
 
       - name: Deploy public directory
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -31,7 +31,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: public/
-          server-dir: public-html/
+          server-dir: ./
 
       - name: Set up SSH key
         run: |
