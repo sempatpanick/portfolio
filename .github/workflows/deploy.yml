@@ -7,7 +7,7 @@ on:
     branches: ["master"]
 
 jobs:
-  laravel-tests:
+  laravel-deployment:
     runs-on: ubuntu-latest
 
     steps:
@@ -28,7 +28,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           exclude: public/**
           local-dir: /
-          server-dir: /laravel
+          server-dir: /laravel/
 
       - name: Deploy public directory
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
