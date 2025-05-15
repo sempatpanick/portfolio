@@ -2,7 +2,8 @@ name: Deploy Laravel
 
 on:
   push:
-    branches: ["master"]
+    branches:
+      - master
 
 jobs:
   laravel-deployment:
@@ -13,11 +14,6 @@ jobs:
         with:
           php-version: "8.4"
       - uses: actions/checkout@v4
-      - name: Install Dependencies
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-      - name: Directory Permissions
-        run: chmod -R 775 storage bootstrap/cache
-
       - name: Deploy Laravel Project
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -36,3 +32,14 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: public/
           server-dir: public-html/
+
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan ${{ vars.SSH_IP }} >> ~/.ssh/known_hosts
+
+      - name: Connect and run command over SSH
+        run: |
+          ssh ${{ vars.SSH_PORT }} ${{ vars.SSH_USERNAME }}@${{ vars.SSH_IP }} "echo 'SSH Connection Successful!' && uptime"
